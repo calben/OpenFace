@@ -308,40 +308,21 @@ int main(int argc, char **argv)
 
 		// Do some grabbing
 		cv::VideoCapture video_capture;
+		cv::Mat captured_image;
+		video_capture.set(cv::CAP_PROP_FRAME_WIDTH, 1920);
+		video_capture.set(cv::CAP_PROP_FRAME_HEIGHT, 1080);
 		video_capture.set(cv::CAP_PROP_FPS, 60);
-		video_capture.set(cv::CAP_PROP_FRAME_HEIGHT, 720);
-		video_capture.set(cv::CAP_PROP_FRAME_WIDTH, 1280);
-		if (current_file.size() > 0)
-		{
-			if (!boost::filesystem::exists(current_file))
-			{
-				FATAL_STREAM("File does not exist");
-				return 1;
-			}
-
-			current_file = boost::filesystem::path(current_file).generic_string();
-
-			INFO_STREAM("Attempting to read from file: " << current_file);
-			video_capture = cv::VideoCapture(current_file);
-		}
-		else
-		{
-			INFO_STREAM("Attempting to capture from device: " << device);
-			video_capture = cv::VideoCapture(device);
-
-			// Read a first frame often empty in camera
-			cv::Mat captured_image;
-			video_capture >> captured_image;
-		}
+		video_capture.set(cv::CAP_PROP_CONVERT_RGB, 0);
+		INFO_STREAM("Attempting to capture from device: " << device);
+		video_capture = cv::VideoCapture(device);
 
 		if (!video_capture.isOpened())
 		{
 			FATAL_STREAM("Failed to open video source");
 			return 1;
 		}
-		else INFO_STREAM("Device or file opened");
 
-		cv::Mat captured_image;
+		INFO_STREAM("Device or file opened");
 		video_capture >> captured_image;
 
 		// If optical centers are not defined just use center of image
